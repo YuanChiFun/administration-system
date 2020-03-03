@@ -32,6 +32,10 @@
     ]
   },
   "devDependencies": {
-    "node-fetch": "^2.6.0"
+    "antd": "^4.0.0",
+    "node-fetch": "^2.6.0",
+    "node-sass": "^4.13.1",
+    "react-router-dom": "^5.1.2",
+    "sass-loader": "^8.0.2"
   }
 }

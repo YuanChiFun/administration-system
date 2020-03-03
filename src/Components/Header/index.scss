@@ -1,0 +1,32 @@
+.title-container {
+    display: flex;
+    position: relative;
+    .name-container {
+        margin-left: 300px;
+        display: flex;
+        .logo {
+            border-radius: 50%;
+            margin-right: 100px;
+            img {
+                margin-top: 15px;
+                width: 64px;
+                height: 64px;
+            }
+        }
+        .name {
+            p {
+                font-size: 60px;
+                margin: 0
+            }
+        }
+    }
+    .admin-login-container {
+        position: relative;
+        margin-left: 200px;
+        button {
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%)
+        }
+    }
+}
