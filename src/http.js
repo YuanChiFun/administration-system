@@ -8,6 +8,7 @@ module.export = {
         const url = `${host}${path}`
         return fetch(url, {
                 method: 'GET',
+                mode: 'cors'
             })
             .then(response => response.json())
             .then((data) => {
@@ -24,7 +25,8 @@ module.export = {
                 body: JSON.stringify(body),
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                mode: 'cors'
             })
             .then(response => response.json())
             .then((data) => {
@@ -39,7 +41,8 @@ module.export = {
     deleteData(path, id) {
         return fetch(`${host}${path}?id=${id}`, {
                 method: 'DELETE',
-                credentials: 'include'
+                credentials: 'include',
+                mode: 'cors'
             })
             .then(response => response.json())
     },

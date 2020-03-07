@@ -2,15 +2,15 @@
     display: flex;
     position: relative;
     .name-container {
-        margin-left: 300px;
+        margin-left: 150px;
         display: flex;
         .logo {
-            border-radius: 50%;
             margin-right: 100px;
             img {
                 margin-top: 15px;
                 width: 64px;
                 height: 64px;
+                border-radius: 50%;
             }
         }
         .name {
@@ -29,4 +29,14 @@
             transform: translate(-50%, -50%)
         }
     }
+}
+
+.menu-container {
+    padding-left: 350px;
+    padding-right: 415px;
+}
+
+.adminMenu-container {
+    padding-left: 310px;
+    padding-right: 370px;
 }

@@ -1,0 +1,20 @@
+@import '~antd/dist/antd.css';
+.container {
+    background-color: #fafafa;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.content-container {
+    display: flex;
+    .right-side {
+        width: 400px;
+        height: 400px;
+    }
+    .left-side {
+        margin-left: 50px;
+        width: 800px;
+        height: 800px;
+        border: 1px solid black;
+    }
+}
