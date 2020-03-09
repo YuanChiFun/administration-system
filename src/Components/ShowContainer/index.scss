@@ -1,3 +1,17 @@
 .show-container {
-    width: 700px;
+    width: 750px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    .show-item-container {
+        width: 190px;
+        height: 250px;
+        .show-image {
+            width: 190px;
+            height: 190px;
+        }
+        .show-name {
+            text-align: center;
+        }
+    }
 }

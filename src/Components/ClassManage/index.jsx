@@ -1,5 +1,8 @@
 import React from 'react'
 import { Table, Checkbox, Button, Modal, Input } from 'antd'
+import CreateClassButton from '../CreateClassButton'
+import moment from 'moment'
+import { loadData, saveData } from '../../http'
 
 import './index.scss'
 
@@ -7,26 +10,14 @@ export default class ClassManage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            dataSource: [
-                {
-                    id: 0,
-                    name: 'mi',
-                    describtion: 'mimian',
-                    updateTime: '2017-10-31 12:12:12'
-                },
-                {
-                    id: 1,
-                    name: 'gua',
-                    describtion: 'shuguo',
-                    updateTime: '2017-10-31 12:12:12'
-                }
-            ],
+            dataSource: [{
+                tid: 1,
+                typeName: 'sss',
+                typeTime: 1583314416000,
+                describes: 'xxxx'
+            }],
             newModal: false,
             updateModal: true,
-            updateInfo: {
-                name: '',
-                describtion: '',
-            },
             newInfo: {
                 name: '',
                 describtion: '',
@@ -34,45 +25,39 @@ export default class ClassManage extends React.Component {
         }
     }
 
+    componentDidMount() {
+       loadData('/types/get')
+       .then(data=>{
+           this.setState({ dataSource: data })
+       })
+       .catch(err => console.log(err))
+    }
+
     onButtonClick() {
         this.setState({ newModal: !this.state.newModal })
     }
     handleNewModalOk() {
-        this.setState({ newModal: !this.state.newModal })
+        const { newInfo } = this.state
+        if (newInfo.name === '' || newInfo.describtion === '') {
+            return Modal.warning({
+                title: '警告',
+                content: '请输入名称和描述'
+            })
+        }
+        saveData('/types/add', {
+            typeName: newInfo.name,
+            describes: newInfo.describtion,
+        })
+        .then(data => {
+            this.setState({ newModal: !this.state.newModal })
+            return Modal.confirm({
+                content: '新增成功',
+            })
+        })
+        .catch(err => console.log(err))
     }
     handleNewModalCancel() {
         this.setState({ newModal: !this.state.newModal })
-    }
-    showUpdateModal(record) {
-        return Modal.confirm({
-            title: '修改',
-            visible: this.state.updateModal,
-            content: (
-                <div>
-                    名称
-                    <Input onChange={(e) => this.onUpdateNameChange(e)} value={this.state.updateInfo.name} />
-                    描述
-                    <Input.TextArea onChange={(e) => this.onUpdateClassChange(e)} value={this.state.updateInfo.describtion} />
-                </div>
-            ),
-            onOk: () => this.handleUpdate(),
-            onCancel: () => this.setState({ updateModal: !this.state.updateModal })
-        })
-    }
-    deleteProduction(record) {
-
-    }
-
-    onUpdateNameChange(e) {
-        const { updateInfo } = this.state
-        updateInfo.name = e.target.value
-        this.setState({ updateInfo: updateInfo })
-    }
-
-    onUpdateClassChange(e) {
-        const { updateInfo } = this.state
-        updateInfo.describtion = e.target.value
-        this.setState({ updateInfo: updateInfo })
     }
 
     onNewNameChange(e) {
@@ -87,15 +72,11 @@ export default class ClassManage extends React.Component {
         this.setState({ newInfo: newInfo })
     }
 
-    handleUpdate() {
-
-    }
-
     render() {
         const columns = [
             {
                 title: '编号',
-                dataIndex: 'id',
+                dataIndex: 'tid',
                 render: (id) => {
                     return (
                         <div>
@@ -106,22 +87,27 @@ export default class ClassManage extends React.Component {
             },
             {
                 title: '名称',
-                dataIndex: 'name',
+                dataIndex: 'typeName',
             },
             {
-                title: '分类',
-                dataIndex: 'describtion',
+                title: '描述',
+                dataIndex: 'describes',
             },
             {
                 title: '更新时间',
-                dataIndex: 'updateTime',
+                dataIndex: 'typeTime',
+                render(time) {
+                    return (
+                        <div>{moment(time).format('YYYY-MM-D hh:mm:ss a')}</div>
+                    )
+                }
             },
             {
                 title: '操作',
                 render: (text, record) => {
                     return (
-                        <div>
-                            <a onClick={(record) => this.showUpdateModal(record)}>修改</a> |  <a onClick={(record) => this.deleteProduction(record)}>删除</a>
+                        <div className='button-container'>
+                            <CreateClassButton type='modify' value='修改' id={text} /><CreateClassButton type='delete' value='删除' id={text}/>
                         </div>
                     )
                 }
@@ -153,6 +139,7 @@ export default class ClassManage extends React.Component {
                     dataSource={this.state.dataSource}
                     columns={columns}
                     rowKey='id'
+                    pagination={{ pageSize: 10 }}
                 />
             </div>
         )

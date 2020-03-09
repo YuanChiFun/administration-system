@@ -1,80 +1,64 @@
 import React from 'react'
 import { Table, Checkbox, Button, Modal, Input, Select } from 'antd'
-
+import CreateProductionButton from '../CreateProductionButton'
+import { saveData, loadData } from '../../http';
+import moment from 'moment'
 import './index.scss'
 
 export default class ClassManage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            dataSource: [
-                {
-                    id: 0,
-                    name: 'mi',
-                    class: 'mimian',
-                    updateTime: '2017-10-31 12:12:12'
-                },
-                {
-                    id: 1,
-                    name: 'gua',
-                    class: 'shuguo',
-                    updateTime: '2017-10-31 12:12:12'
-                }
-            ],
+            dataSource: [],
             newModal: false,
-            updateModal: true,
-            updateInfo: {
-                name: '',
-                class: '',
-            },
             newInfo: {
                 name: '',
                 class: '',
-            }
+                url: '',
+            },
+            class: [],
         }
+    }
+    componentDidMount() {
+        loadData('/types/list')
+            .then(data => {
+                this.setState({class: data.list})
+            })
+            .catch(err => console.log(err))
+        loadData('/product/get')
+        .then(data => {
+            this.setState({ dataSource: data })
+        })
+        .catch(err => console.log(err))
     }
 
     onButtonClick () {
         this.setState({ newModal: !this.state.newModal })
     }
     handleNewModalOk () {
-        this.setState({ newModal: !this.state.newModal })
+        const { newInfo } = this.state
+        if (newInfo.name === '' || newInfo.class === '') {
+            return Modal.confirm({
+                title: '警告',
+                content: '请输入名称并选择分类'
+            })
+        }
+        saveData('/product/add', {
+            productName: newInfo.name,
+            typeName: newInfo.class,
+            url: newInfo.url
+        })
+            .then(data => {
+                this.setState({ newModal: !this.state.newModal })
+                return Modal.confirm({
+                    content: '新增成功',
+                })
+            })
+            .catch(err => console.log(err))
     }
     handleNewModalCancel () {
         this.setState({ newModal: !this.state.newModal })
     }
-    showUpdateModal (record) {
-        return Modal.confirm({
-            title: '修改',
-            visible: this.state.updateModal,
-            content: (
-                <div>
-                    名称
-                    <Input onChange={(e) => this.onUpdateNameChange(e)} value={this.state.updateInfo.name}/>
-                    分类
-                    <Select onSelect={(e) => this.onUpdateClassSelect(e)} value={this.state.updateInfo.class}/>
-                </div>
-            ),
-            onOk: () => this.handleUpdate(),
-            onCancel: () => this.setState({ updateModal: !this.state.updateModal })
-        })
-    }
-    deleteProduction (record) {
-
-    }
-
-    onUpdateNameChange (e) {
-        const { updateInfo } = this.state
-        updateInfo.name = e.target.value
-        this.setState({ updateInfo: updateInfo })
-    }
-
-    onUpdateClassSelect (e) {
-        const { updateInfo } = this.state
-        updateInfo.class = e
-        this.setState({ updateInfo: updateInfo })
-    }
-
     onNewNameChange (e) {
         const { newInfo } = this.state
         newInfo.name = e.target.value
@@ -87,15 +71,17 @@ export default class ClassManage extends React.Component {
         this.setState({ newInfo: newInfo })
     }
 
-    handleUpdate () {
-
+    onNewUrlChange (e) {
+        const { newInfo } = this.state
+        newInfo.url = e.target.url
+        this.setState({ newInfo: newInfo })
     }
 
     render() {
         const columns = [
             {
                 title: '编号',
-                dataIndex: 'id',
+                dataIndex: 'pid',
                 render: (id) => {
                     return (
                         <div>
@@ -106,22 +92,28 @@ export default class ClassManage extends React.Component {
             },
             {
                 title: '名称',
-                dataIndex: 'name',
+                dataIndex: 'productName',
             },
             {
                 title: '分类',
-                dataIndex: 'class',
+                dataIndex: 'typeName',
             },
             {
                 title: '更新时间',
-                dataIndex: 'updateTime',
+                dataIndex: 'productTime',
+                render(time) {
+                    return (
+                        <div>{moment(time).format('YYYY-MM-D hh:mm:ss a')}</div>
+                    )
+                }
             },
             {
                 title: '操作',
-                render: (text, record) => {
+                render: (text) => {
                     return (
-                        <div>
-                            <a onClick={(record) => this.showUpdateModal(record)}>修改</a> |  <a onClick={(record) => this.deleteProduction(record)}>删除</a>
+                        <div className='button-container'>
+                            <CreateProductionButton type='modify' value='修改' id={text} list={this.state.class}/>
+                            <CreateProductionButton type='delete' value='删除' id={text} /> 
                         </div>
                     )
                 }
@@ -139,9 +131,22 @@ export default class ClassManage extends React.Component {
                 >
                     名称
                     <Input onChange={(e) => this.onNewNameChange(e)} value={this.state.newInfo.name}/>
-                    分类
-                    <Select onSelect={(e) => this.onNewClassSelect(e)} value={this.state.newInfo.class}>    
+                    <p>分类</p>
+                    <Select
+                        onSelect={(e) => this.onNewClassSelect(e)}
+                        value={this.state.newInfo.class}
+                        style={{ width: 200 }}
+                    >
+                        {
+                            this.state.class.map(item => {
+                                return (
+                                    <Select.Option key='tid' value={item.typeName}>{item.typeName}</Select.Option>
+                                )
+                            })
+                        }
                     </Select>
+                    <p>图片链接</p>
+                    <Input onChange={(e) => this.onNewUrlChange(e)} value={this.state.newInfo.url} />
                 </Modal>
                 <p className='production-manage-title'>农业产品管理</p>
                 <Button
@@ -154,6 +159,7 @@ export default class ClassManage extends React.Component {
                     dataSource={this.state.dataSource}
                     columns={columns}
                     rowKey='id'
+                    pagination={{ pageSize: 10 }}
                 />
             </div>
         )

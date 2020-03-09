@@ -1,57 +1,50 @@
 import fetch from 'node-fetch'
 import { resolve } from 'url';
 
-const host = '127.0.0.1' //后端地址
+const host = 'http://295uq99495.wicp.vip' //后端地址
 
-module.export = {
-    loadData(path) {
-        const url = `${host}${path}`
-        return fetch(url, {
-                method: 'GET',
-                mode: 'cors'
-            })
-            .then(response => response.json())
-            .then((data) => {
-                if (!data.result) throw new Error(data.error)
-                return data
-            })
-    },
+export function loadData(path) {
+    const url = `${host}${path}`
+    return fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+        })
+        .then(response => response.json())
+        .then((data) => {
+            return data.data
+        })
+}
 
-    savaData(path, body) {
-        const url = `${host}${path}`
-        return fetch(url, {
-                credentials: 'include',
-                method: 'POST',
-                body: JSON.stringify(body),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                mode: 'cors'
-            })
-            .then(response => response.json())
-            .then((data) => {
-                if (result.error) {
-                    return reject(data.error)
-                }
-                resolve(data)
-            })
+export async function saveData(path, body) {
+    const url = `${host}${path}`
+    const result = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        })
+        .then(response => response.json())
+    return result
+}
 
-    },
+export function deleteData(path, entity) {
+    return fetch(`${host}${path}`, {
+            method: 'POST',
+            body: JSON.stringify(entity),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        })
+        .then(response => response.json())
+}
 
-    deleteData(path, id) {
-        return fetch(`${host}${path}?id=${id}`, {
-                method: 'DELETE',
-                credentials: 'include',
-                mode: 'cors'
-            })
-            .then(response => response.json())
-    },
-
-    joinQuery(query) {
-        if (!query) return '';
-        return Object.keys(query)
-            .filter(key => query[key] !== '')
-            .map(key => `${key} = ${encodeURIComponent(query[key])}`)
-            .join('&')
-    }
+export function joinQuery(query) {
+    if (!query) return '';
+    return Object.keys(query)
+        .filter(key => query[key] !== '')
+        .map(key => `${key} = ${encodeURIComponent(query[key])}`)
+        .join('&')
 }

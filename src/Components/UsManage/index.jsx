@@ -2,17 +2,18 @@ import React from 'react'
 import { Input, Button } from 'antd'
 
 import './index.scss'
+import { saveData } from '../../http';
 
 export default class UsManage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            name: '',
+            name: '华鑫农业信息有限公司',
             call: '',
             address: '',
             phone: '',
             telephone: '',
-            chuanzhen: '',
+            fax: '',
             email: '',
             postNumber: '',
             QQ: '',
@@ -32,7 +33,7 @@ export default class UsManage extends React.Component {
     }
 
     onChuanzhenChange (e) {
-        this.setState({ chuanzhen: e.target.value })
+        this.setState({ fax: e.target.value })
     }
 
     onEmailChange (e) {
@@ -56,7 +57,18 @@ export default class UsManage extends React.Component {
     }
 
     submite () {
-        const  { name, call, address, phone, telephone, chuanzhen, email, postNumber, QQ} = this.state
+        const  { name, call, address, phone, telephone, fax, email, postNumber, QQ} = this.state
+        saveData('/contact/update', {
+            componenyName: name,
+            contacts: call,
+            address:address,
+            phone: phone,
+            telephone: telephone,
+            fax: fax,
+            eMail: email,
+            zipCode: postNumber,
+            qq: QQ
+        })
     }
 
     render () {
@@ -73,14 +85,14 @@ export default class UsManage extends React.Component {
                 电话号码：
                 <Input onChange={(e) => this.onTelephoneChange(e)} value={this.state.telephone} />
                 传真：
-                <Input onChange={(e) => this.onChuanzhenChange(e)} value={this.state.chuanzhen} />
+                <Input onChange={(e) => this.onChuanzhenChange(e)} value={this.state.fax} />
                 邮箱：
                 <Input onChange={(e) => this.onEmailChange(e)} value={this.state.email} />
                 邮编：
                 <Input onChange={(e) => this.onPostNumberChange(e)} value={this.state.postNumber} />
                 QQ:
                 <Input onChange={(e) => this.onQQChange(e)} value={this.state.QQ} />
-                <Button onClick={() => this.submite()}></Button>
+                <Button type='primary' onClick={() => this.submite()}>保存并提交</Button>
             </div>
         )
     }

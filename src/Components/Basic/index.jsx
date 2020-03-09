@@ -1,16 +1,27 @@
 import React from 'react'
 import { Card } from 'antd'
 import './index.scss'
+import { loadData } from '../../http';
+import { declareTypeAlias } from '@babel/types';
 
 export default class Basic extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-
+            data: {},
         }
     }
 
+    componentDidMount () {
+        loadData('/introduce/detail')
+        .then(data => {
+            this.setState({data: data})
+        })
+        .catch(err=> console.log(err))
+    }
+
     render () {
+        const { data } = this.state
         return (
             <div>
                 <div className='basic-container'>
@@ -19,11 +30,11 @@ export default class Basic extends React.Component {
                         style={{ width: 400 }}
                     >
                         <div className='logo-container'>
-                            <img src="https://ww4.sinaimg.cn/bmiddle/006gMa6wgy1gcgs0s2mx6j30me0ilwg6.jpg" className='logo' />
+                            <img src={data.logo === undefined ? '' : data.logo} className='logo' />
                         </div>
-                        <p className='company-name'>华鑫农业信息有限公司</p>
-                        <p className='manage-name'>马先生</p>
-                        <p className='mode'>经营模式： 服务型【未认证】</p>
+                        <p className='company-name'>{data.companyName === undefined ? '' : data.companyName}</p>
+                        <p className='manage-name'>{data.contacts === undefined ? '' : data.contacts}</p>
+                        <p className='mode'>{data.management_mode === undefined ? '' : data.management_mode}</p>
                     </Card>
                 </div>
             </div>

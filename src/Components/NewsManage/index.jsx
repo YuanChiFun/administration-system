@@ -1,5 +1,8 @@
 import React from 'react'
 import { Table, Checkbox, Button, Modal, Input } from 'antd'
+import moment from 'moment'
+import CreateNewsButton from '../CreateNewsButton'
+import { loadData, saveData } from '../../http';
 
 import './index.scss'
 
@@ -7,72 +10,49 @@ export default class ClassManage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            dataSource: [
-                {
-                    id: 0,
-                    title: 'mi',
-                    url: 'mimian',
-                    updateTime: '2017-10-31 12:12:12'
-                },
-                {
-                    id: 1,
-                    title: 'gua',
-                    url: 'shuguo',
-                    updateTime: '2017-10-31 12:12:12'
-                }
-            ],
+            dataSource: [],
             newModal: false,
             updateModal: true,
-            updateInfo: {
-                name: '',
-                describtion: '',
-            },
             newInfo: {
                 name: '',
-                describtion: '',
+                url: '',
             }
         }
+    }
+
+    componentDidMount() {
+        loadData('/news/list')
+        .then((data) => {
+            this.setState({dataSource: data})
+        })
+        .catch(err => console.log(err))
     }
 
     onButtonClick() {
         this.setState({ newModal: !this.state.newModal })
     }
     handleNewModalOk() {
-        this.setState({ newModal: !this.state.newModal })
+        const { newInfo } = this.state
+        if (newInfo.name === '' && newInfo.url === '') {
+            return Modal.confirm({
+                title: '警告',
+                content: '请输入新闻标题和链接'
+            })
+        }
+        saveData('/news/add', {
+            newsTitle: newInfo.name,
+            url: newInfo.url
+        })
+            .then(data => {
+                this.setState({ newModal: !this.state.newModal })
+                return Modal.confirm({
+                    content: '新增成功',
+                })
+            })
+            .catch(err => console.log(err))
     }
     handleNewModalCancel() {
         this.setState({ newModal: !this.state.newModal })
-    }
-    showUpdateModal(record) {
-        return Modal.confirm({
-            title: '修改',
-            visible: this.state.updateModal,
-            content: (
-                <div>
-                    名称
-                    <Input onChange={(e) => this.onUpdateNameChange(e)} value={this.state.updateInfo.name} />
-                    链接
-                    <Input.TextArea onChange={(e) => this.onUpdateClassChange(e)} value={this.state.updateInfo.describtion} />
-                </div>
-            ),
-            onOk: () => this.handleUpdate(),
-            onCancel: () => this.setState({ updateModal: !this.state.updateModal })
-        })
-    }
-    deleteProduction(record) {
-
-    }
-
-    onUpdateNameChange(e) {
-        const { updateInfo } = this.state
-        updateInfo.name = e.target.value
-        this.setState({ updateInfo: updateInfo })
-    }
-
-    onUpdateClassChange(e) {
-        const { updateInfo } = this.state
-        updateInfo.describtion = e.target.value
-        this.setState({ updateInfo: updateInfo })
     }
 
     onNewNameChange(e) {
@@ -83,45 +63,52 @@ export default class ClassManage extends React.Component {
 
     onNewClassChange(e) {
         const { newInfo } = this.state
-        newInfo.describtion = e.target.value
+        newInfo.url = e.target.value
         this.setState({ newInfo: newInfo })
-    }
-
-    handleUpdate() {
-
     }
 
     render() {
         const columns = [
             {
                 title: '编号',
-                dataIndex: 'id',
-                render: (id) => {
+                dataIndex: 'nid',
+                render: (nid) => {
                     return (
                         <div>
-                            <Checkbox>{id}</Checkbox>
+                            <Checkbox>{nid}</Checkbox>
                         </div>
                     )
                 }
             },
             {
                 title: '新闻标题',
-                dataIndex: 'title',
+                dataIndex: 'newsTitle',
             },
             {
                 title: '新闻链接',
                 dataIndex: 'url',
+                render(url) {
+                    return (
+                        <a  href={url}>详情</a>
+                    )
+                }
             },
             {
                 title: '更新时间',
-                dataIndex: 'updateTime',
+                dataIndex: 'typeTime',
+                render(time) {
+                    return (
+                        <div>{moment(time).format('YYYY-MM-D hh:mm:ss a')}</div>
+                    )
+                }
             },
             {
                 title: '操作',
+                dataIndex: 'nid',
                 render: (text, record) => {
                     return (
-                        <div>
-                            <a onClick={(record) => this.showUpdateModal(record)}>修改</a> |  <a onClick={(record) => this.deleteProduction(record)}>删除</a>
+                        <div className='button-container'>
+                            <CreateNewsButton type='modify' value='修改' id={text} /><CreateNewsButton type='delete' value='删除' id={text} title={record.newsTitle}/>
                         </div>
                     )
                 }
@@ -140,7 +127,7 @@ export default class ClassManage extends React.Component {
                     名称
                     <Input onChange={(e) => this.onNewNameChange(e)} value={this.state.newInfo.name} />
                     链接
-                    <Input.TextArea onChange={(e) => this.onNewClassChange(e)} value={this.state.newInfo.describtion} />
+                    <Input.TextArea onChange={(e) => this.onNewClassChange(e)} value={this.state.newInfo.url} />
                 </Modal>
                 <p className='production-manage-title'>农业新闻管理</p>
                 <Button
@@ -152,7 +139,8 @@ export default class ClassManage extends React.Component {
                 <Table
                     dataSource={this.state.dataSource}
                     columns={columns}
-                    rowKey='id'
+                    rowKey='nid'
+                    pagination={{ pageSize: 10 }}
                 />
             </div>
         )

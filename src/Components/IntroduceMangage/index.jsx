@@ -1,5 +1,6 @@
 import React from 'react'
-import { Input, Button } from 'antd'
+import { Input, Button, Modal } from 'antd'
+import { saveData } from '../../http'
 import './index.scss'
 
 export default class IntroduceManage extends React.Component {
@@ -31,6 +32,19 @@ export default class IntroduceManage extends React.Component {
     }
     submite () {
         const { name, call, mode, logo, introduce } = this.state
+        saveData('/introduce/update', {
+            companyName: name,
+            contacts: call,
+            management_model: mode,
+            logo: logo,
+            company_introduce: introduce
+        })
+        .then(data => {
+            return Modal.confirm({
+                content: '修改成功'
+            })
+        })
+        .catch(err => console.log(err))
     }
 
     render () {

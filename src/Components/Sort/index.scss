@@ -1,0 +1,15 @@
+.sort {
+    display: flex;
+    position: relative;
+    border-bottom: 1px solid gray;
+    height: 70px;
+    align-items: center;
+    .sort-name {
+        font-size: 22px;
+        font-weight: bold;
+    }
+    .sort-des {
+        position: absolute;
+        right: 1px;
+    }
+}

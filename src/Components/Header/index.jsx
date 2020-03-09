@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Menu, Modal, Input, Carousel } from 'antd'
+import { saveData, joinQuery } from '../../http'
 import './index.scss'
 
 const position = {
@@ -27,10 +28,27 @@ export default class Header extends React.Component {
     }
 
     handleOk () {
-        window.location.pathname = 'introduceManage'
-        this.setState({
-            isShowLoginModal: !this.state.isShowLoginModal,
-            isAdmin: !this.state.isAdmin
+        const { loginInfo } = this.state
+        if (loginInfo.name === '' || loginInfo.password === '') {
+            return Modal.confirm({
+                title: '警告',
+                content: '请输入用户名和密码'
+            })
+        }
+
+        saveData('/user/login', {
+            username:loginInfo.name,
+            password:loginInfo.password
+        })
+        .then ((data) => {
+            window.location.pathname = 'introduceManage'
+            this.setState({
+                isShowLoginModal: !this.state.isShowLoginModal,
+                isAdmin: !this.state.isAdmin
+            })
+        })
+        .catch((err) => {
+            console.log(err)
         })
     }
 
@@ -91,7 +109,15 @@ export default class Header extends React.Component {
                         </div>
                     </div>
                     <div className='admin-login-container'>
-                        <Button type='primary' onClick={() => this.showLoginModal()}>管理员登录</Button>
+                        {
+                            this.state.isAdmin ? (
+                                <div>
+                                    你好，Admin
+                                </div>
+                            ) : (
+                                <Button type='primary' onClick={() => this.showLoginModal()}>管理员登录</Button>
+                            )
+                        }
                     </div>
                 </div>
                 {
@@ -161,10 +187,10 @@ export default class Header extends React.Component {
                     ) :
                     (
                         <Carousel>
-                            <img src="#" />
-                            <img src="#" />
-                            <img src="#" />
-                            <img src="#" />
+                            <img src="#" alt='' />
+                            <img src="#" alt='' />
+                            <img src="#" alt='' />
+                            <img src="#" alt='' />
                         </Carousel>
                     )
                 }
