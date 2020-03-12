@@ -35,9 +35,9 @@ export default class IntroduceManage extends React.Component {
         saveData('/introduce/update', {
             companyName: name,
             contacts: call,
-            management_model: mode,
+            managementModel: mode,
             logo: logo,
-            company_introduce: introduce
+            companyIntroduce: introduce
         })
         .then(data => {
             return Modal.confirm({

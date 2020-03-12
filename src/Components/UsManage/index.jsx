@@ -58,6 +58,7 @@ export default class UsManage extends React.Component {
 
     submite () {
         const  { name, call, address, phone, telephone, fax, email, postNumber, QQ} = this.state
+        console.log(name)
         saveData('/contact/update', {
             componenyName: name,
             contacts: call,

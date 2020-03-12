@@ -1,34 +1,23 @@
 import React from 'react'
-import { Card } from 'antd';
+import { Card } from 'antd'
 import './index.scss'
-
-const data  = [
-    {
-        "tid": 1,
-        "typeName": "粮油米面",
-        "typeTime": 1583314416000,
-        "describes": "五谷杂粮、食用油"
-    },
-    {
-        "tid": 2,
-        "typeName": "蔬果花木",
-        "typeTime": 1583314416000,
-        "describes": "蔬菜、花果、花草"
-    },
-    {
-        "tid": 3,
-        "typeName": "农副产品",
-        "typeTime": 1583314416000,
-        "describes": "酒茶冲饮、肉类加工"
-    }
-]
+import { loadData } from '../../http'
 
 export default class Sort extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            shape:this.props.shape
+            shape:this.props.shape,
+            data: []
         }
+    }
+
+    componentDidMount() {
+        loadData('/types/list')
+        .then(data => {
+            this.setState({data: data})
+        })
+        .catch(err=> console.log(err))
     }
 
     sortModel = r => (
@@ -42,27 +31,31 @@ export default class Sort extends React.Component {
         </div>
     )
 
-    smallSort = () => (
-        <Card title="产品分类" extra={<a href="#">更多</a>} style={{ width: 400 }}>
+    smallSort = () => {
+        const data = this.state.data
+        return (
+        <Card title="产品分类" style={{ width: 400 }}>
             {
                 data.slice(0,2).map(r=> this.sortModel(r))
             }
         </Card>
-    )
+    )}
 
-    bigSort = () => (
+    bigSort = () => {
+        const data = this.state.data
+        return (
         <Card title="所有产品分类" style={{ width: 800 }}>
             {
                 data.map(r=> this.sortModel(r))
             }
         </Card>
-    )
+    )}
 
     render () {
         const shape = this.state.shape;
             return (
                 <div className="sort-container">
-                    {shape == 'big' ? this.bigSort() : this.smallSort()}
+                    {shape === 'big' ? this.bigSort() : this.smallSort()}
                 </div>
             )
     }

@@ -7,15 +7,14 @@ export default class ShowContainer extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            data: [
-            ]
+            data: []
         }
     }
 
     componentDidMount () {
         loadData('/product/get')
         .then((data) => {
-            this.setState({data: data.list})
+            this.setState({data: data})
         })
         .catch(err => console.log(err))
     }

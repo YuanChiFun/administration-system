@@ -102,7 +102,7 @@ export default class Header extends React.Component {
                 <div className='title-container'>
                     <div className='name-container'>
                         <div className='logo'>
-                            <img src="https://ww4.sinaimg.cn/bmiddle/006gMa6wgy1gcgs0s2mx6j30me0ilwg6.jpg" alt="" />
+                            <img src="http://3.pic.pc6.com/up/2015-9/20159115335.png" alt="" />
                         </div>
                         <div className='name'>
                             <p>华鑫农业信息管理系统</p>

@@ -4,6 +4,7 @@ import CreateProductionButton from '../CreateProductionButton'
 import { saveData, loadData } from '../../http';
 import moment from 'moment'
 import './index.scss'
+import { ConsoleWriter } from 'istanbul-lib-report';
 
 export default class ClassManage extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ export default class ClassManage extends React.Component {
     componentDidMount() {
         loadData('/types/list')
             .then(data => {
-                this.setState({class: data.list})
+                this.setState({class: data})
             })
             .catch(err => console.log(err))
         loadData('/product/get')
@@ -73,7 +74,7 @@ export default class ClassManage extends React.Component {
 
     onNewUrlChange (e) {
         const { newInfo } = this.state
-        newInfo.url = e.target.url
+        newInfo.url = e.target.value
         this.setState({ newInfo: newInfo })
     }
 
@@ -110,10 +111,11 @@ export default class ClassManage extends React.Component {
             {
                 title: '操作',
                 render: (text) => {
+                    console.log(text)
                     return (
                         <div className='button-container'>
-                            <CreateProductionButton type='modify' value='修改' id={text} list={this.state.class}/>
-                            <CreateProductionButton type='delete' value='删除' id={text} /> 
+                            <CreateProductionButton type='modify' value='修改' id={text.pid} list={this.state.class}/>
+                            <CreateProductionButton type='delete' value='删除' id={text.pid} /> 
                         </div>
                     )
                 }

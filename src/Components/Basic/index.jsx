@@ -13,9 +13,9 @@ export default class Basic extends React.Component {
     }
 
     componentDidMount () {
-        loadData('/introduce/detail')
+        loadData('/introduce/list')
         .then(data => {
-            this.setState({data: data})
+            this.setState({data: data[0]})
         })
         .catch(err=> console.log(err))
     }
@@ -34,7 +34,7 @@ export default class Basic extends React.Component {
                         </div>
                         <p className='company-name'>{data.companyName === undefined ? '' : data.companyName}</p>
                         <p className='manage-name'>{data.contacts === undefined ? '' : data.contacts}</p>
-                        <p className='mode'>{data.management_mode === undefined ? '' : data.management_mode}</p>
+                        <p className='mode'>{data.managementModel === undefined ? '' : data.managementModel}</p>
                     </Card>
                 </div>
             </div>

@@ -43,7 +43,7 @@ export default class CreateButton extends React.Component {
             })
         }
         saveData('/product/update', {
-            nid: this.props.id,
+            pid: this.props.id,
             productName: updateInfo.name,
             typeName: updateInfo.class,
             url: updateInfo.url

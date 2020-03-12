@@ -69,14 +69,6 @@ class App extends React.Component {
                                             <Span />
                                         </div>
                                     )}
-                                    {position === 'news' && (
-                                        <div>
-                                            <Sort shape='small' />
-                                            <Span />
-                                            <Contact shape='small' />
-                                            <Span />
-                                        </div>
-                                    )}
                                     {position === 'production' && (
                                         <div>
                                             <News shape='small' />

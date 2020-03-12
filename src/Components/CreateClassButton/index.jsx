@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Modal, Input } from 'antd'
-import { saveData, deleteData } from '../../http';
+import { saveData, deleteData,loadData } from '../../http';
 
 export default class CreateClassButton extends React.Component {
     constructor(props) {
@@ -12,6 +12,14 @@ export default class CreateClassButton extends React.Component {
                 describes: '',
             },
         }
+    }
+
+    componentDidMount() {
+        loadData('/types/list')
+        .then(data => {
+            console.log(data)
+        })
+        .catch(err=> console.log(err))
     }
 
     onUpdateNameChange(e) {
@@ -36,7 +44,7 @@ export default class CreateClassButton extends React.Component {
             })
         }
         saveData('/types/update', {
-            nid: this.props.id,
+            tid: this.props.id,
             typeName: updateInfo.name,
             describes: updateInfo.describes
         })

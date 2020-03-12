@@ -26,7 +26,7 @@ export default class ClassManage extends React.Component {
     }
 
     componentDidMount() {
-       loadData('/types/get')
+       loadData('/types/list')
        .then(data=>{
            this.setState({ dataSource: data })
        })
@@ -104,10 +104,11 @@ export default class ClassManage extends React.Component {
             },
             {
                 title: '操作',
-                render: (text, record) => {
+                render: text => {
                     return (
                         <div className='button-container'>
-                            <CreateClassButton type='modify' value='修改' id={text} /><CreateClassButton type='delete' value='删除' id={text}/>
+                            <CreateClassButton type='modify' value='修改' data= {text} id={text.tid} />
+                            <CreateClassButton type='delete' value='删除' data={text} id={text.tid}/>
                         </div>
                     )
                 }
@@ -128,7 +129,7 @@ export default class ClassManage extends React.Component {
                     描述
                     <Input.TextArea onChange={(e) => this.onNewClassChange(e)} value={this.state.newInfo.describtion} />
                 </Modal>
-                <p className='production-manage-title'>农业产品管理</p>
+                <p className='production-manage-title'>产品分类管理</p>
                 <Button
                     type='primary'
                     onClick={() => this.onButtonClick()}

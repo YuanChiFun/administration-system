@@ -106,6 +106,8 @@ export default class ClassManage extends React.Component {
                 title: '操作',
                 dataIndex: 'nid',
                 render: (text, record) => {
+                    console.log(text)
+
                     return (
                         <div className='button-container'>
                             <CreateNewsButton type='modify' value='修改' id={text} /><CreateNewsButton type='delete' value='删除' id={text} title={record.newsTitle}/>
